@@ -41,7 +41,7 @@
 
     - name: Clone project
       git:
-        repo: "https://github.com/YassineAouididi/ecommerce"
+        repo: "https://github.com/YassineAouididi/ecommerce.git"
         dest: /app
         version: main
 
