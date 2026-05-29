@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Orders - eStore Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="/">🛍️ eStore Admin</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/pages/admin-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/admin-products.html">Products</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/admin-manage-orders.html">Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid py-4">
+    <h2 class="mb-4">Manage Orders</h2>
+
+    <div class="mb-3">
+      <label for="statusFilter" class="form-label">Filter by Status:</label>
+      <select id="statusFilter" class="form-select" style="width: 200px; display: inline-block;" onchange="filterOrders()">
+        <option value="">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+              <th>Payment</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ordersList">
+            <!-- Orders will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="orderDetails">
+          <!-- Order details will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="updateOrderBtn">Update Status</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let currentOrderId;
+
+    async function loadOrders(status = '') {
+      const token = localStorage.getItem('token');
+
+      try {
+        const params = new URLSearchParams();
+        params.append('limit', 100);
+        if (status) params.append('status', status);
+
+        const response = await fetch(`/api/orders?${params}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          displayOrders(result.data);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function displayOrders(orders) {
+      const tbody = document.getElementById('ordersList');
+      const html = orders.map(order => `
+        <tr>
+          <td>#${order._id.substring(0, 8)}</td>
+          <td>${order.userId.name}</td>
+          <td>$${order.totalAmount.toFixed(2)}</td>
+          <td><span class="badge bg-${getStatusColor(order.status)}">${order.status}</span></td>
+          <td><span class="badge bg-${order.paymentStatus === 'paid' ? 'success' : 'warning'}">${order.paymentStatus}</span></td>
+          <td>${new Date(order.orderDate).toLocaleDateString()}</td>
+          <td>
+            <button class="btn btn-sm btn-info" onclick="viewOrder('${order._id}')">View</button>
+            <button class="btn btn-sm btn-warning" onclick="showUpdateModal('${order._id}')">Update</button>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = html;
+    }
+
+    function getStatusColor(status) {
+      const colors = {
+        pending: 'warning',
+        confirmed: 'info',
+        processing: 'primary',
+        shipped: 'secondary',
+        delivered: 'success',
+        cancelled: 'danger'
+      };
+      return colors[status] || 'secondary';
+    }
+
+    async function viewOrder(orderId) {
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch(`/api/orders/${orderId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const order = result.data;
+          currentOrderId = orderId;
+
+          const detailsHtml = `
+            <div class="mb-3">
+              <h6>Order Information</h6>
+              <p><strong>Order ID:</strong> ${order._id}</p>
+              <p><strong>Customer:</strong> ${order.userId.name} (${order.userId.email})</p>
+              <p><strong>Total Amount:</strong> $${order.totalAmount.toFixed(2)}</p>
+              <p><strong>Order Date:</strong> ${new Date(order.orderDate).toLocaleDateString()}</p>
+              <p><strong>Status:</strong> <span class="badge bg-${getStatusColor(order.status)}">${order.status}</span></p>
+              <p><strong>Payment Status:</strong> <span class="badge bg-${order.paymentStatus === 'paid' ? 'success' : 'warning'}">${order.paymentStatus}</span></p>
+            </div>
+
+            <div class="mb-3">
+              <h6>Items</h6>
+              <ul class="list-unstyled">
+                ${order.items.map(item => `
+                  <li>• ${item.productName} x ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}</li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <div class="mb-3">
+              <h6>Shipping Address</h6>
+              <p>
+                ${order.shippingAddress.fullName}<br>
+                ${order.shippingAddress.address}<br>
+                ${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zipCode}<br>
+                ${order.shippingAddress.country}<br>
+                Phone: ${order.shippingAddress.phone}
+              </p>
+            </div>
+          `;
+
+          document.getElementById('orderDetails').innerHTML = detailsHtml;
+
+          const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+          modal.show();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function showUpdateModal(orderId) {
+      currentOrderId = orderId;
+      viewOrder(orderId);
+    }
+
+    document.getElementById('updateOrderBtn').addEventListener('click', async () => {
+      const newStatus = prompt('Enter new status (pending, confirmed, processing, shipped, delivered, cancelled):');
+      
+      if (!newStatus) return;
+
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch(`/api/orders/${currentOrderId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Order updated successfully!');
+          bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+          loadOrders();
+        } else {
+          alert(result.message || 'Error updating order');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating order');
+      }
+    });
+
+    function filterOrders() {
+      const status = document.getElementById('statusFilter').value;
+      loadOrders(status);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.role !== 'admin') {
+        window.location.href = '/pages/login.html';
+      }
+      loadOrders();
+    });
+  </script>
+</body>
+</html>

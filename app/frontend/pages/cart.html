@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - eStore</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-store"></i> eStore
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/products.html">Products</a></li>
+          <li class="nav-item ms-3">
+            <a class="nav-link" href="/pages/cart.html">
+              <i class="fas fa-shopping-cart"></i> 
+              <span id="cartCount" class="badge bg-danger ms-2">0</span>
+            </a>
+          </li>
+          <li class="nav-item ms-3" id="authNav">
+            <a class="nav-link btn btn-primary text-white px-3" href="/pages/login.html">Login</a>
+          </li>
+          <li class="nav-item ms-2" id="userNav" style="display:none;">
+            <div class="dropdown">
+              <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle"></i> <span id="userName">User</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="/pages/profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="/pages/my-orders.html"><i class="fas fa-box"></i> My Orders</a></li>
+                <li id="adminLink" style="display:none;"><hr class="dropdown-divider"></li>
+                <li id="adminLink2" style="display:none;"><a class="dropdown-item" href="/pages/admin-dashboard.html"><i class="fas fa-cog"></i> Admin Dashboard</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 40px 0;">
+    <div class="container">
+      <h1 class="h2 fw-bold mb-2"><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</h1>
+      <p class="opacity-75">Review and manage your items</p>
+    </div>
+  </section>
+
+  <div class="container py-5">
+    <div id="cartEmpty" class="text-center py-5">
+      <div class="mb-4">
+        <i class="fas fa-shopping-bag fa-5x" style="color: var(--primary); opacity: 0.3;"></i>
+      </div>
+      <h4 class="mb-2">Your cart is empty</h4>
+      <p class="text-muted mb-4">Add some products to get started!</p>
+      <a href="/pages/products.html" class="btn btn-primary btn-lg">
+        <i class="fas fa-shopping-bags me-2"></i>Continue Shopping
+      </a>
+    </div>
+
+    <div id="cartItems" style="display:none;">
+      <div class="row">
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+          <div id="itemsList" class="card">
+            <!-- Cart items will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="col-lg-4">
+          <div class="card sticky-top" style="top: 80px;">
+            <div class="card-body">
+              <h5 class="card-title mb-4">
+                <i class="fas fa-receipt me-2"></i>Order Summary
+              </h5>
+              <hr>
+              <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">Subtotal:</span>
+                <span id="subtotal" class="fw-600">$0.00</span>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">Shipping:</span>
+                <span class="fw-600">$5.00</span>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span class="text-muted">Tax (10%):</span>
+                <span id="tax" class="fw-600">$0.00</span>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between mb-4">
+                <strong class="text-lg">Total:</strong>
+                <strong id="total" class="text-primary fs-5">$0.00</strong>
+              </div>
+              <a href="/pages/checkout.html" class="btn btn-primary w-100 mb-2 btn-lg">
+                <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+              </a>
+              <a href="/pages/products.html" class="btn btn-outline-secondary w-100">
+                <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-5 mt-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h5 class="mb-3">
+            <i class="fas fa-store"></i> eStore
+          </h5>
+          <p class="text-muted">Your one-stop shop for everything you need.</p>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a href="/pages/products.html" class="text-muted text-decoration-none">Products</a></li>
+            <li><a href="/pages/cart.html" class="text-muted text-decoration-none">Cart</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Customer Service</h6>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">Returns</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Follow Us</h6>
+          <div>
+            <a href="#" class="text-muted me-3"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-muted me-3"><i class="fab fa-instagram fa-lg"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="bg-secondary">
+      <div class="text-center text-muted">
+        <p>&copy; 2024 eStore. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    async function loadCart() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login first');
+        window.location.href = '/pages/login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/cart', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data.items.length > 0) {
+          displayCartItems(result.data);
+          updateCartSummary(result.data);
+        }
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      }
+    }
+
+    function displayCartItems(cart) {
+      const itemsList = document.getElementById('itemsList');
+      const html = cart.items.map(item => `
+        <div class="list-group-item list-group-item-action py-4 border-bottom">
+          <div class="row align-items-center g-3">
+            <div class="col-md-8">
+              <div class="d-flex gap-4">
+                <img src="${item.productId.image}" alt="${item.productId.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div class="flex-grow-1">
+                  <h6 class="mb-2 fw-600">${item.productId.name}</h6>
+                  <p class="text-muted mb-2 small">
+                    <i class="fas fa-tag me-1"></i>${item.productId.category}
+                  </p>
+                  <p class="mb-0">
+                    <strong class="text-primary">$${item.price}</strong>
+                    <span class="text-muted ms-2">per item</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="input-group" style="width: 120px;">
+                  <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('${item.productId._id}', ${item.quantity - 1})">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input type="number" class="form-control form-control-sm text-center" value="${item.quantity}" readonly>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('${item.productId._id}', ${item.quantity + 1})">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+                <div class="text-end">
+                  <p class="mb-2 fw-bold text-primary">$${(item.price * item.quantity).toFixed(2)}</p>
+                  <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart('${item.productId._id}')">
+                    <i class="fas fa-trash me-1"></i>Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      itemsList.innerHTML = html;
+      document.getElementById('cartEmpty').style.display = 'none';
+      document.getElementById('cartItems').style.display = 'block';
+    }
+
+    function updateCartSummary(cart) {
+      const subtotal = cart.totalPrice;
+      const shipping = 5.00;
+      const tax = (subtotal * 0.1).toFixed(2);
+      const total = (subtotal + shipping + parseFloat(tax)).toFixed(2);
+
+      document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('tax').textContent = `$${tax}`;
+      document.getElementById('total').textContent = `$${total}`;
+    }
+
+    async function removeFromCart(productId) {
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch('/api/cart/remove', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ productId })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          updateCartCount();
+          loadCart();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function updateQuantity(productId, quantity) {
+      const token = localStorage.getItem('token');
+      if (quantity < 1) {
+        removeFromCart(productId);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/cart/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ productId, quantity })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          loadCart();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthNav();
+      loadCart();
+    });
+  </script>
+</body>
+</html>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    async function loadCart() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login first');
+        window.location.href = '/pages/login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/cart', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data.items.length > 0) {
+          displayCartItems(result.data);
+          updateCartSummary(result.data);
+        }
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      }
+    }
+
+    function displayCartItems(cart) {
+      const itemsList = document.getElementById('itemsList');
+      const html = cart.items.map(item => `
+        <div class="list-group-item list-group-item-action">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <div class="d-flex gap-3">
+                <img src="${item.productId.image}" alt="${item.productId.name}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;">
+                <div>
+                  <h6 class="mb-1">${item.productId.name}</h6>
+                  <p class="text-muted mb-1">${item.productId.category}</p>
+                  <p class="mb-0">Price: $${item.price}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="input-group" style="width: 100px;">
+                  <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('${item.productId._id}', ${item.quantity - 1})">-</button>
+                  <input type="number" class="form-control form-control-sm text-center" value="${item.quantity}" readonly>
+                  <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity('${item.productId._id}', ${item.quantity + 1})">+</button>
+                </div>
+                <div class="text-end">
+                  <p class="mb-0 fw-bold">$${(item.price * item.quantity).toFixed(2)}</p>
+                  <button class="btn btn-sm btn-danger" onclick="removeFromCart('${item.productId._id}')">Remove</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      itemsList.innerHTML = html;
+      document.getElementById('cartEmpty').style.display = 'none';
+      document.getElementById('cartItems').style.display = 'block';
+      document.getElementById('cartSummary').style.display = 'block';
+    }
+
+    function updateCartSummary(cart) {
+      const subtotal = cart.totalPrice;
+      const shipping = 5.00;
+      const tax = (subtotal * 0.1).toFixed(2);
+      const total = (subtotal + shipping + parseFloat(tax)).toFixed(2);
+
+      document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById('tax').textContent = `$${tax}`;
+      document.getElementById('total').textContent = `$${total}`;
+    }
+
+    async function removeFromCart(productId) {
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch('/api/cart/remove', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ productId })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          updateCartCount();
+          loadCart();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function updateQuantity(productId, newQuantity) {
+      if (newQuantity < 1) return;
+
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch('/api/cart/update', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ productId, quantity: newQuantity })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          loadCart();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error updating cart');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthNav();
+      loadCart();
+    });
+  </script>
+</body>
+</html>

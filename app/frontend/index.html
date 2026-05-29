@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eStore - Premium Online Shopping Platform</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-store"></i> eStore
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/products.html">Products</a></li>
+          <li class="nav-item ms-3">
+            <a class="nav-link" href="/pages/cart.html">
+              <i class="fas fa-shopping-cart"></i> 
+              <span id="cartCount" class="badge bg-danger ms-2">0</span>
+            </a>
+          </li>
+          <li class="nav-item ms-3" id="authNav">
+            <a class="nav-link btn btn-primary text-white px-3" href="/pages/login.html">Login</a>
+          </li>
+          <li class="nav-item ms-2" id="userNav" style="display:none;">
+            <div class="dropdown">
+              <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle"></i> <span id="userName">User</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="/pages/profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="/pages/my-orders.html"><i class="fas fa-box"></i> My Orders</a></li>
+                <li id="adminLink" style="display:none;"><hr class="dropdown-divider"></li>
+                <li id="adminLink2" style="display:none;"><a class="dropdown-item" href="/pages/admin-dashboard.html"><i class="fas fa-cog"></i> Admin Dashboard</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container-fluid">
+      <div class="row align-items-center min-vh-75">
+        <div class="col-lg-6 d-flex flex-column justify-content-center">
+          <h1 class="display-3 fw-800 mb-4">
+            Discover Your <span style="background: linear-gradient(135deg, #ec4899, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Store</span>
+          </h1>
+          <p class="lead fs-5 mb-5 opacity-90">Shop from thousands of premium products at unbeatable prices. Fast delivery, secure payment, and 100% satisfaction guaranteed.</p>
+          <div>
+            <a href="/pages/products.html" class="btn btn-light btn-lg me-3 mb-2">
+              <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+            </a>
+            <a href="#features" class="btn btn-outline-light btn-lg mb-2">
+              <i class="fas fa-info-circle me-2"></i>Learn More
+            </a>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="hero-image">
+            <div style="font-size: 180px; opacity: 0.9;">🛍️</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="text-center mb-5">Why Choose eStore?</h2>
+      <div class="row g-5">
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-truck" style="color: var(--primary);"></i>
+            </div>
+            <h5 class="mb-3">Fast Delivery</h5>
+            <p class="text-muted">Quick and reliable shipping to your doorstep within 3-5 business days</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-tag" style="color: var(--secondary);"></i>
+            </div>
+            <h5 class="mb-3">Best Prices</h5>
+            <p class="text-muted">Competitive pricing on all products with regular discounts and offers</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-lock" style="color: var(--success);"></i>
+            </div>
+            <h5 class="mb-3">Secure Payment</h5>
+            <p class="text-muted">Safe and encrypted checkout process with multiple payment options</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card text-center">
+            <div class="feature-icon mb-3">
+              <i class="fas fa-star" style="color: var(--warning);"></i>
+            </div>
+            <h5 class="mb-3">Quality Assured</h5>
+            <p class="text-muted">All products are carefully selected and verified for quality</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Shop by Category</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="category-card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05)); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border);">
+            <i class="fas fa-laptop fa-3x mb-3" style="color: var(--primary);"></i>
+            <h5>Electronics</h5>
+            <p class="text-muted">Gadgets & Tech</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category-card" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(236, 72, 153, 0.05)); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border);">
+            <i class="fas fa-shirt fa-3x mb-3" style="color: var(--secondary);"></i>
+            <h5>Clothing</h5>
+            <p class="text-muted">Fashion & Apparel</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border);">
+            <i class="fas fa-book fa-3x mb-3" style="color: var(--success);"></i>
+            <h5>Books</h5>
+            <p class="text-muted">Reading Material</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05)); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border);">
+            <i class="fas fa-home fa-3x mb-3" style="color: var(--info);"></i>
+            <h5>Home</h5>
+            <p class="text-muted">Home & Garden</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05)); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border);">
+            <i class="fas fa-dumbbell fa-3x mb-3" style="color: var(--warning);"></i>
+            <h5>Sports</h5>
+            <p class="text-muted">Sports & Fitness</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category-card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid var(--border);">
+            <i class="fas fa-cube fa-3x mb-3" style="color: var(--danger);"></i>
+            <h5>Other</h5>
+            <p class="text-muted">More Products</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-5" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; margin-top: 60px;">
+    <div class="container text-center">
+      <h3 class="h2 mb-4">Ready to Shop?</h3>
+      <p class="lead mb-4">Browse our exclusive collection and find everything you need.</p>
+      <a href="/pages/products.html" class="btn btn-light btn-lg">
+        <i class="fas fa-search me-2"></i>Explore Products
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-5 mt-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h5 class="mb-3">
+            <i class="fas fa-store"></i> eStore
+          </h5>
+          <p class="text-muted">Your one-stop shop for everything you need.</p>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a href="/pages/products.html" class="text-muted text-decoration-none">Products</a></li>
+            <li><a href="/pages/cart.html" class="text-muted text-decoration-none">Cart</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Customer Service</h6>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">Returns</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Follow Us</h6>
+          <div>
+            <a href="#" class="text-muted me-3"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-muted me-3"><i class="fab fa-instagram fa-lg"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="bg-secondary">
+      <div class="text-center text-muted">
+        <p>&copy; 2024 eStore. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
+
+  <!-- Popular Products Section -->
+  <section class="products-section py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Popular Products</h2>
+      <div id="popularProducts" class="row g-4">
+        <!-- Products will be loaded here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-4 mt-5">
+    <div class="container">
+      <p>&copy; 2024 eStore. All rights reserved. | Built with Node.js & Express</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Update auth nav
+      updateAuthNav();
+      
+      // Load popular products
+      try {
+        const response = await fetch('/api/products?limit=6');
+        const result = await response.json();
+        
+        if (result.success) {
+          const container = document.getElementById('popularProducts');
+          container.innerHTML = result.data.map(product => `
+            <div class="col-md-4 col-lg-3">
+              <div class="product-card">
+                <img src="${product.image}" alt="${product.name}" class="product-img">
+                <div class="product-info">
+                  <p class="category-badge">${product.category}</p>
+                  <h6 class="product-name">${product.name}</h6>
+                  <p class="product-price">$${product.price}</p>
+                  <a href="/pages/product-detail.html?id=${product._id}" class="btn btn-sm btn-primary">View Details</a>
+                </div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    });
+  </script>
+</body>
+</html>

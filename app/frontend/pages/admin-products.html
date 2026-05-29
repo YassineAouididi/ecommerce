@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Products - eStore Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="/">🛍️ eStore Admin</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/pages/admin-dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/admin-products.html">Products</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/admin-manage-orders.html">Orders</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Manage Products</h2>
+      <a href="/pages/admin-add-product.html" class="btn btn-primary">+ Add New Product</a>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsList">
+            <!-- Products will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    async function loadProducts() {
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch('/api/products?limit=100', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          displayProducts(result.data);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function displayProducts(products) {
+      const tbody = document.getElementById('productsList');
+      const html = products.map(product => `
+        <tr>
+          <td><img src="${product.image}" alt="${product.name}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;"></td>
+          <td>${product.name}</td>
+          <td><span class="badge bg-info">${product.category}</span></td>
+          <td>$${product.price}</td>
+          <td><span class="badge ${product.stock > 0 ? 'bg-success' : 'bg-danger'}">${product.stock}</span></td>
+          <td><span class="badge ${product.isActive ? 'bg-success' : 'bg-secondary'}">${product.isActive ? 'Active' : 'Inactive'}</span></td>
+          <td>
+            <a href="/pages/admin-edit-product.html?id=${product._id}" class="btn btn-sm btn-warning">Edit</a>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product._id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+
+      tbody.innerHTML = html;
+    }
+
+    async function deleteProduct(productId) {
+      if (!confirm('Are you sure you want to delete this product?')) {
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch(`/api/products/${productId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Product deleted successfully!');
+          loadProducts();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error deleting product');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.role !== 'admin') {
+        window.location.href = '/pages/login.html';
+      }
+      loadProducts();
+    });
+  </script>
+</body>
+</html>

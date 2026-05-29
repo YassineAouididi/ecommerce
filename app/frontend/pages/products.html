@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - eStore</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-store"></i> eStore
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pages/products.html">Products</a></li>
+          <li class="nav-item ms-3">
+            <a class="nav-link" href="/pages/cart.html">
+              <i class="fas fa-shopping-cart"></i> 
+              <span id="cartCount" class="badge bg-danger ms-2">0</span>
+            </a>
+          </li>
+          <li class="nav-item ms-3" id="authNav">
+            <a class="nav-link btn btn-primary text-white px-3" href="/pages/login.html">Login</a>
+          </li>
+          <li class="nav-item ms-2" id="userNav" style="display:none;">
+            <div class="dropdown">
+              <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle"></i> <span id="userName">User</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="/pages/profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="/pages/my-orders.html"><i class="fas fa-box"></i> My Orders</a></li>
+                <li id="adminLink" style="display:none;"><hr class="dropdown-divider"></li>
+                <li id="adminLink2" style="display:none;"><a class="dropdown-item" href="/pages/admin-dashboard.html"><i class="fas fa-cog"></i> Admin Dashboard</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 40px 0;">
+    <div class="container">
+      <h1 class="h2 fw-bold mb-2"><i class="fas fa-shopping-bags me-2"></i>Our Products</h1>
+      <p class="opacity-75">Explore our exclusive collection of premium items</p>
+    </div>
+  </section>
+
+  <div class="container-fluid py-5">
+    <div class="row">
+      <!-- Sidebar Filters -->
+      <div class="col-lg-3 mb-4">
+        <div class="card sticky-top" style="top: 80px;">
+          <div class="card-body">
+            <h5 class="card-title mb-4">
+              <i class="fas fa-filter me-2"></i>Filters
+            </h5>
+            
+            <!-- Search -->
+            <div class="mb-4">
+              <label class="form-label fw-600">Search Products</label>
+              <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+                <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
+              </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="mb-4">
+              <label class="form-label fw-600">Category</label>
+              <select id="categoryFilter" class="form-select">
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Books">Books</option>
+                <option value="Home">Home</option>
+                <option value="Sports">Sports</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <!-- Sort -->
+            <div class="mb-4">
+              <label class="form-label fw-600">Sort By</label>
+              <select id="sortFilter" class="form-select">
+                <option value="-createdAt">Newest</option>
+                <option value="price">Price: Low to High</option>
+                <option value="-price">Price: High to Low</option>
+                <option value="-rating">Rating: High to Low</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary w-100 mb-2" onclick="applyFilters()">
+              <i class="fas fa-check me-2"></i>Apply Filters
+            </button>
+            <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+              <i class="fas fa-redo me-2"></i>Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products -->
+      <div class="col-lg-9">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Showing Products</h4>
+          <span class="badge bg-primary" id="productCount">0 items</span>
+        </div>
+        <div id="productsContainer" class="row g-4">
+          <!-- Products will be loaded here -->
+          <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-3">Loading products...</p>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-5">
+          <ul id="pagination" class="pagination justify-content-center">
+            <!-- Pagination will be loaded here -->
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-5 mt-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h5 class="mb-3">
+            <i class="fas fa-store"></i> eStore
+          </h5>
+          <p class="text-muted">Your one-stop shop for everything you need.</p>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a href="/pages/products.html" class="text-muted text-decoration-none">Products</a></li>
+            <li><a href="/pages/cart.html" class="text-muted text-decoration-none">Cart</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">About Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Customer Service</h6>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
+            <li><a href="#" class="text-muted text-decoration-none">Returns</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="mb-3">Follow Us</h6>
+          <div>
+            <a href="#" class="text-muted me-3"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-muted me-3"><i class="fab fa-twitter fa-lg"></i></a>
+            <a href="#" class="text-muted me-3"><i class="fab fa-instagram fa-lg"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="bg-secondary">
+      <div class="text-center text-muted">
+        <p>&copy; 2024 eStore. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let currentPage = 1;
+    let filters = {
+      search: '',
+      category: '',
+      sort: '-createdAt'
+    };
+
+    async function loadProducts(page = 1) {
+      try {
+        const params = new URLSearchParams();
+        params.append('page', page);
+        params.append('limit', 12);
+        if (filters.search) params.append('search', filters.search);
+        if (filters.category) params.append('category', filters.category);
+        params.append('sort', filters.sort);
+
+        const response = await fetch(`/api/products?${params}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const container = document.getElementById('productsContainer');
+          document.getElementById('productCount').textContent = `${result.data.length} items`;
+          
+          container.innerHTML = result.data.map(product => `
+            <div class="col-md-6 col-lg-4">
+              <div class="product-card">
+                <div style="position: relative; overflow: hidden;">
+                  <img src="${product.image}" alt="${product.name}" class="product-img">
+                  <span class="category-badge">${product.category}</span>
+                </div>
+                <div class="product-info">
+                  <h6 class="product-name">${product.name}</h6>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <p class="product-price mb-0">$${product.price.toFixed(2)}</p>
+                    <span class="rating"><i class="fas fa-star"></i> ${product.rating}</span>
+                  </div>
+                  <a href="/pages/product-detail.html?id=${product._id}" class="btn btn-primary btn-sm w-100 mb-2">
+                    <i class="fas fa-eye me-2"></i>View Details
+                  </a>
+                  <button class="btn btn-outline-secondary btn-sm w-100" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">
+                    <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+          // Load pagination
+          loadPagination(result.pagination);
+          currentPage = page;
+        }
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('productsContainer').innerHTML = '<div class="col-12 text-center text-danger"><p>Error loading products. Please try again.</p></div>';
+      }
+    }
+
+    function loadPagination(pagination) {
+      const container = document.getElementById('pagination');
+      let html = '';
+
+      if (pagination.page > 1) {
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadProducts(${pagination.page - 1})"><i class="fas fa-chevron-left"></i> Previous</a></li>`;
+      }
+
+      for (let i = 1; i <= pagination.pages; i++) {
+        if (i === pagination.page) {
+          html += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+        } else {
+          html += `<li class="page-item"><a class="page-link" href="#" onclick="loadProducts(${i})">${i}</a></li>`;
+        }
+      }
+
+      if (pagination.page < pagination.pages) {
+        html += `<li class="page-item"><a class="page-link" href="#" onclick="loadProducts(${pagination.page + 1})">Next <i class="fas fa-chevron-right"></i></a></li>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function applyFilters() {
+      filters.search = document.getElementById('searchInput').value;
+      filters.category = document.getElementById('categoryFilter').value;
+      filters.sort = document.getElementById('sortFilter').value;
+      loadProducts(1);
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('categoryFilter').value = '';
+      document.getElementById('sortFilter').value = '-createdAt';
+      filters = { search: '', category: '', sort: '-createdAt' };
+      loadProducts(1);
+    }
+
+    function addToCart(productId, productName, price) {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ id: productId, name: productName, price, quantity: 1 });
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+      
+      // Show toast notification
+      showNotification('Added to cart!', 'success');
+    }
+
+    function showNotification(message, type) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.style.position = 'fixed';
+      alertDiv.style.top = '80px';
+      alertDiv.style.right = '20px';
+      alertDiv.style.zIndex = '1000';
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      document.body.appendChild(alertDiv);
+      
+      setTimeout(() => alertDiv.remove(), 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAuthNav();
+      loadProducts(1);
+    });
+  </script>
+</body>
+</html>
