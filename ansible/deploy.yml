@@ -48,4 +48,4 @@
     - name: Run containers
       shell: docker compose up -d --build
       args:
-        chdir: /app
+        chdir: /app/app
